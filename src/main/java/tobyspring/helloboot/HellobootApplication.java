@@ -6,6 +6,7 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -17,24 +18,35 @@ import java.io.IOException;
 
 public class HellobootApplication {
 
-	public static void main(String[] args) {
-		ServletWebServerFactory serverFactory = new TomcatServletWebServerFactory();
-		WebServer webServer = serverFactory.getWebServer(servletContext -> {
-			servletContext.addServlet("hello", new HttpServlet() {
+    public static void main(String[] args) {
+        ServletWebServerFactory serverFactory = new TomcatServletWebServerFactory();
+        WebServer webServer = serverFactory.getWebServer(servletContext -> {
+            HelloController helloController = new HelloController();
 
-				@Override
-				protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+            servletContext.addServlet("frontcontroller", new HttpServlet() {
 
-					String name = req.getParameter("name");
+                @Override
+                protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+                    // 인증, 보안 다국어, 공통 기능
+                    if (req.getRequestURI().equals("/hello") && req.getMethod().equals(HttpMethod.GET.name())) {
 
-					//응답의 3요소(상태, 헤더, 바디)
-					resp.setStatus(HttpStatus.OK.value());
-					resp.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
-					resp.getWriter().println("Hello " + name);
-				}
-			}).addMapping("/hello");
-		});
-		webServer.start();
-	}
+                        String name = req.getParameter("name");
+
+                        String ret = helloController.hello(name);
+
+                        //응답의 3요소(상태, 헤더, 바디)
+                        resp.setStatus(HttpStatus.OK.value());
+                        resp.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
+                        resp.getWriter().println(ret);
+                    } else if (req.getRequestURI().equals("/user")) {
+
+                    } else {
+                        resp.setStatus(HttpStatus.NOT_FOUND.value());
+                    }
+                }
+            }).addMapping("/*");// 프론트 컨트롤러로 처리할 떄는 모든 url 요청을 받아야 하기에... 중앙화(프론트 컨트롤러 책임)
+        });
+        webServer.start();
+    }
 
 }
