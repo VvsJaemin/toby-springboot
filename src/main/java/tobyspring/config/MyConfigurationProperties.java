@@ -1,5 +1,6 @@
 package tobyspring.config;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.ElementType;
