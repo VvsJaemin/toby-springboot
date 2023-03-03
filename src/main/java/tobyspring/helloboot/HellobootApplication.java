@@ -1,5 +1,6 @@
 package tobyspring.helloboot;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -7,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import tobyspring.config.MySpringBootApplication;
 
-import javax.annotation.PostConstruct;
 
 @MySpringBootApplication
 public class HellobootApplication {
